@@ -142,3 +142,36 @@ def plot_confusion_matrix(labels, pre, classes, savepath='./temp_cm', normalize=
     plt.tight_layout()
     plt.savefig(savepath+'.png')
     plt.savefig(savepath+'.eps')
+
+def plot_tsne(tsne_result, labels, classes, savepath='./temp_tsne',title = 't-SNE Visualization',legend=True):
+    plt.figure(figsize=(8, 7))
+    unique_labels = np.unique(labels)
+    scatter = plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=labels, cmap='viridis')
+
+    if legend:
+        class_colors = plt.cm.viridis(np.linspace(0, 1, len(unique_labels)))
+        handles = [plt.Line2D([0], [0], marker='o', linestyle='None', color=class_colors[i], markerfacecolor=class_colors[i], markersize=10, label=classes[i]) for i in unique_labels]
+        plt.legend(handles=handles, title='Classes')
+
+    plt.title('t-SNE Visualization')
+    plt.tight_layout()
+    plt.savefig(savepath+'.png')
+    plt.savefig(savepath+'.eps')
+
+def plot_tsne_v2(tsne_result_sim, labels_sim, tsne_result_real, labels_real, classes,  savepath='./temp_tsne', title = 't-SNE Visualization', legend=True):
+    plt.figure(figsize=(8, 7))
+    unique_labels = np.unique(labels_sim+labels_real)
+    plt.scatter(tsne_result_sim[:, 0], tsne_result_sim[:, 1], c=labels_sim, cmap='viridis',marker='*')
+    plt.scatter(tsne_result_real[:, 0], tsne_result_real[:, 1], c=labels_real, cmap='viridis',marker='o')
+
+    if legend:
+        class_colors = plt.cm.viridis(np.linspace(0, 1, len(unique_labels)))
+        handles1 = [plt.Line2D([0], [0], marker='*', linestyle='None', color=class_colors[i], markerfacecolor=class_colors[i], markersize=10, label=classes[i]+" (sim)") for i in unique_labels]
+        handels2 = [plt.Line2D([0], [0], marker='o', linestyle='None', color=class_colors[i], markerfacecolor=class_colors[i], markersize=10, label=classes[i]+" (real)") for i in unique_labels]
+        handles=handles1+handels2
+        plt.legend(handles=handles, title='Classes')
+
+    plt.title(title)
+    plt.tight_layout()
+    plt.savefig(savepath+'.png')
+    plt.savefig(savepath+'.eps')
