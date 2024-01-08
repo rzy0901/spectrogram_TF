@@ -153,7 +153,7 @@ def plot_tsne(tsne_result, labels, classes, savepath='./temp_tsne',title = 't-SN
         handles = [plt.Line2D([0], [0], marker='o', linestyle='None', color=class_colors[i], markerfacecolor=class_colors[i], markersize=10, label=classes[i]) for i in unique_labels]
         plt.legend(handles=handles, title='Classes')
 
-    plt.title('t-SNE Visualization')
+    plt.title(title)
     plt.tight_layout()
     plt.savefig(savepath+'.png')
     plt.savefig(savepath+'.eps')
