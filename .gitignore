@@ -167,3 +167,4 @@ train/
 bak/
 output_source_*/
 *.pth
+train_target_*/

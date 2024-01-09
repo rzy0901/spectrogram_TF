@@ -89,6 +89,28 @@ def classifier(model,features):
     _,predicted = torch.max(outputs,axis = 1)
     return predicted
 
+from torchvision import models
+def load_resnet18_by_featureExtractor_classifier(feature_extractor_model,classifier_model,resnet18=None):
+    if resnet18 is None:
+        resnet18 = models.resnet18(pretrained=True)
+    resnet18.conv1 = feature_extractor_model.conv1
+    resnet18.bn1 = feature_extractor_model.bn1
+    resnet18.relu = feature_extractor_model.relu
+    resnet18.maxpool = feature_extractor_model.maxpool
+    resnet18.layer1 = feature_extractor_model.layer1
+    resnet18.layer2 = feature_extractor_model.layer2
+    resnet18.layer3 = feature_extractor_model.layer3
+    resnet18.layer4 = feature_extractor_model.layer4
+    resnet18.avgpool = feature_extractor_model.avgpool
+    resnet18.fc = classifier_model.fc
+    return resnet18
+
+def load_resnet_by_featureExtractor_classifier(feature_extractor_model,classifier_model,resnet):
+    for name, layer in feature_extractor_model.named_children():
+        setattr(resnet,name,layer)
+    resnet.fc = classifier_model.fc
+    return resnet
+
 ######################################## plot-related ########################################
 
 import seaborn as sns
@@ -107,6 +129,7 @@ def plot_cm(labels, pre, savepath='./temp_cm'):
     plt.tight_layout()
     plt.savefig(savepath+'.png')
     plt.savefig(savepath+'.eps')
+    plt.show()
 
 import itertools
 def plot_confusion_matrix(labels, pre, classes, savepath='./temp_cm', normalize=False, title='Confusion matrix', cmap=plt.cm.Blues,fontsize=20):
@@ -142,6 +165,7 @@ def plot_confusion_matrix(labels, pre, classes, savepath='./temp_cm', normalize=
     plt.tight_layout()
     plt.savefig(savepath+'.png')
     plt.savefig(savepath+'.eps')
+    plt.show()
 
 def plot_tsne(tsne_result, labels, classes, savepath='./temp_tsne',title = 't-SNE Visualization',legend=True):
     plt.figure(figsize=(8, 7))
@@ -157,6 +181,7 @@ def plot_tsne(tsne_result, labels, classes, savepath='./temp_tsne',title = 't-SN
     plt.tight_layout()
     plt.savefig(savepath+'.png')
     plt.savefig(savepath+'.eps')
+    plt.show()
 
 def plot_tsne_v2(tsne_result_sim, labels_sim, tsne_result_real, labels_real, classes,  savepath='./temp_tsne', title = 't-SNE Visualization', legend=True):
     plt.figure(figsize=(8, 7))
@@ -175,3 +200,22 @@ def plot_tsne_v2(tsne_result_sim, labels_sim, tsne_result_real, labels_real, cla
     plt.tight_layout()
     plt.savefig(savepath+'.png')
     plt.savefig(savepath+'.eps')
+    plt.show()
+    
+from torchvision.utils import make_grid   
+def visualize_batches_from_dataloader(dataloader, nbatches=1, cmap='gray', title=None):
+    dataiter = iter(dataloader)
+    plt.figure()
+    all_images = []
+
+    for batch_idx, (images, labels) in enumerate(dataiter):
+        if batch_idx >= nbatches:
+            break
+        images = images / 2 + 0.5  # unnormalize
+        all_images.append(images)
+
+    images = torch.cat(all_images, dim=0)
+    npimg = make_grid(images).numpy()
+    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+    plt.title(f"{title} - {nbatches} Batches Combined")
+    plt.show()
