@@ -24,7 +24,7 @@ Unsupervised adversarial domain adaptation for spectrogram images (`simulation` 
   <tr>
     <td>TSNE for test</td>
     <td><img src = "./output_source/Test_TSNE.png"></td>
-    <td><img src = "./output_DA/Test_TSNE.png"></td>
+    <td><img src = "./output_DA_2/Test_TSNE.png"></td>
   </tr>
   <tr>
     <td>TSNE for all</td>
